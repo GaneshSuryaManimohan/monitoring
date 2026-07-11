@@ -1,5 +1,6 @@
 In /etc/yum.repos.d/grafana.repo add
 
+```
 [grafana]
 name=grafana
 baseurl=https://rpm.grafana.com
@@ -10,3 +11,4 @@ gpgkey=https://rpm.grafana.com/gpg.key
 sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
 
+```
