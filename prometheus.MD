@@ -1,0 +1,11 @@
+[Unit]
+Description=Prometheus Monitoring System
+Documentation=https://prometheus.io/docs/introduction/overview
+After=network-online.target
+
+[Service]
+ExecStart=/opt/prometheus/prometheus  --config.file=/opt/prometheus/prometheus.yml
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
