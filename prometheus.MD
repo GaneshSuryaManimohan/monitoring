@@ -66,3 +66,21 @@ usually it runs on 9090
 ```
 netstat -lntp
 ```
+9. ### Alertmanager systemd 
+
+```
+[Unit]
+Description=Alertmanager
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=alertmanager
+Group=alertmanager
+Type=simple
+WorkingDirectory=/opt/alertmanager/
+ExecStart=/opt/alertmanager/alertmanager --config.file=/opt/alertmanager/alertmanager.yml
+
+[Install]
+WantedBy=multi-user.target
+```
