@@ -110,20 +110,20 @@ WantedBy=multi-user.target
 systemctl daemon-reload 
 ```
 
-15. ### Start Prometheus:
+15. ### Start alertmanager:
 
 ```
 systemctl start alertmanager
 ```
 
-16. ### Check status of Prometheus:
+16. ### Check status of alertmanager:
 
 ```
 systemctl status alertmanager
 ```
 Should be Active: active (running)
 
-17. ### Enable Prometheus
+17. ### Enable alertmanager
 ```
 systemctl enable alertmanager
 ```
