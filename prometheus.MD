@@ -66,7 +66,28 @@ usually it runs on 9090
 ```
 netstat -lntp
 ```
-9. ### Alertmanager systemd 
+9. ### Download Alertmanager
+
+```
+wget https://github.com/prometheus/alertmanager/releases/download/v0.33.1/alertmanager-0.33.1.linux-amd64.tar.gz
+```
+
+11. ### Uncompress the data
+```
+tar -xf alertmanager-0.33.1.linux-amd64.tar.gz
+```
+
+12. ### Rename the alertmanager directory
+
+```
+mv alertmanager-0.33.1.linux-amd64 alertmanager
+```
+
+13. ### Alertmanager systemd 
+
+```
+vim /etc/systemd/system/alertmanager.service
+```
 
 ```
 [Unit]

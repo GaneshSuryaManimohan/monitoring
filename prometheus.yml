@@ -13,7 +13,7 @@ alerting:
 
 # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
 rule_files:
-  - "alert-rules/*.yaml"
+  - "/opt/prometheus/alert-rules/*.yaml"
   # - "second_rules.yml"
 
 # A scrape configuration containing exactly one endpoint to scrape:
@@ -31,11 +31,11 @@ scrape_configs:
         labels:
           name: "prometheus"
 
-  - job_name: "nodes"
-    static_configs:
-      - targets: ["172.31.21.118:9100"]
-        labels:
-          name: "node-1"
+  # - job_name: "nodes"
+  #   static_configs:
+  #     - targets: ["172.31.21.118:9100"]
+  #       labels:
+  #         name: "node-1"
 
   - job_name: "ec2_sd"
     ec2_sd_configs:
