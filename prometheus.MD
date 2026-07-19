@@ -96,8 +96,6 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-User=alertmanager
-Group=alertmanager
 Type=simple
 WorkingDirectory=/opt/alertmanager/
 ExecStart=/opt/alertmanager/alertmanager --config.file=/opt/alertmanager/alertmanager.yml
