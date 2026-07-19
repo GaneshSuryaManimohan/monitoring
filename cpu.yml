@@ -2,7 +2,7 @@ groups:
 - name: CPUUtilisationHigh
   rules:
   - alert: CPUUtilisationHigh
-    expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m]) * 100)) > 0.01
+    expr: 100 - (avg by (instance, name) (rate(node_cpu_seconds_total{mode="idle"}[5m]) * 100)) > 0.01
     for: 1m
     labels:
       severity: 'critical'
@@ -10,7 +10,11 @@ groups:
       summary: CPU Utilisation is high
 
 # PromQL Query for network usage
-# sum by (instance, name)(irate(node_network_receive_bytes_total[5m])) + sum by (instance, name)(irate(node_network_transmit_bytes_total[5m]))
+# 8 * (
+#     sum by (instance, name)(irate(node_network_receive_bytes_total[5m]))
+#     +
+#     sum by (instance, name)(irate(node_network_transmit_bytes_total[5m]))
+#   )
 
 # PromQL for disk usage
 # 100 - ((node_filesystem_avail_bytes{mountpoint="/"} * 100 ) / node_filesystem_size_bytes{mountpoint="/"})

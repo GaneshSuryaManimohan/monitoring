@@ -38,13 +38,19 @@ systemctl daemon-reload
 systemctl start grafana-server
 ```
 
-6. ### Enable grafana-server
+
+6. ### check status of grafana-server
+```
+systemctl status grafana-server
+```
+
+7. ### Enable grafana-server
 
 ```
 systemctl enable grafana-server
 ```
 
-7. ### check which port grafana is running on:
+8. ### check which port grafana is running on:
 
 Usually it runs on 3000
 
