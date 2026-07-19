@@ -103,3 +103,27 @@ ExecStart=/opt/alertmanager/alertmanager --config.file=/opt/alertmanager/alertma
 [Install]
 WantedBy=multi-user.target
 ```
+
+14. ### Daemon reload:
+
+```
+systemctl daemon-reload 
+```
+
+15. ### Start Prometheus:
+
+```
+systemctl start alertmanager
+```
+
+16. ### Check status of Prometheus:
+
+```
+systemctl status alertmanager
+```
+Should be Active: active (running)
+
+17. ### Enable Prometheus
+```
+systemctl enable alertmanager
+```
