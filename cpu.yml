@@ -20,7 +20,8 @@ groups:
 # 100 - ((node_filesystem_avail_bytes{mountpoint="/"} * 100 ) / node_filesystem_size_bytes{mountpoint="/"})
 
 # PromQL for memory usage
-# (node_memory_MemFree_bytes / node_memory_MemTotal_bytes) * 100
+# 100 - ((node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100)
+
 
 
 
