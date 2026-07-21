@@ -14,6 +14,7 @@ TIME_STAMP=$(date +%F-%H-%M-%S)
 USERID=$(id -u)
 SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
 LOGFILE=/tmp/$SCRIPT_NAME-$TIME_STAMP.log
+PROMETHEUS_DIR="/opt/prometheus"
 
 
 
@@ -38,14 +39,23 @@ VALIDATE(){
 cd /opt &>>$LOGFILE
 VALIDATE $? "Changing directory to /opt"
 
-wget https://github.com/prometheus/prometheus/releases/download/v3.13.1/prometheus-3.13.1.linux-amd64.tar.gz &>>$LOGFILE
-VALIDATE $? "Downloading Prometheus"
+# Idempotent download+extract: skip if already installed
+if [ -d "$PROMETHEUS_DIR" ]
+then
+    echo -e "Prometheus already downloaded....$Y SKIPPING $N" | tee -a $LOGFILE
+else
+    wget https://github.com/prometheus/prometheus/releases/download/v3.13.1/prometheus-3.13.1.linux-amd64.tar.gz &>>$LOGFILE
+    VALIDATE $? "Downloading Prometheus"
 
-tar -xf prometheus-3.13.1.linux-amd64.tar.gz &>>$LOGFILE
-VALIDATE $? "Extracting Prometheus"
+    tar -xf prometheus.tar.gz &>>$LOGFILE
+    VALIDATE $? "Extracting Prometheus"
 
-mv /opt/prometheus-3.13.1.linux-amd64 prometheus &>>$LOGFILE
-VALIDATE $? "Renaming Prometheus directory"
+    mv "prometheus-.linux-amd64" "$PROMETHEUS_DIR" &>>$LOGFILE
+    VALIDATE $? "Renaming Prometheus directory"
+
+    rm -f prometheus.tar.gz &>>$LOGFILE
+    VALIDATE $? "Cleaning up archive"
+fi
 
 cp -f /home/ec2-user/monitoring/prometheus.service /etc/systemd/system/prometheus.service
 VALIDATE $? "Copying Prometheus service file"
