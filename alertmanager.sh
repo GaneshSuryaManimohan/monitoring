@@ -14,6 +14,7 @@ TIME_STAMP=$(date +%F-%H-%M-%S)
 SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
 LOGFILE=/tmp/$SCRIPT_NAME-$TIME_STAMP.log
 USERID=$(id -u)
+ALERTMANAGER_DIR="/opt/alertmanager"
 
 VALIDATE(){
     if [ $1 -ne 0 ]
@@ -36,20 +37,46 @@ fi
 cd /opt &>>$LOGFILE
 VALIDATE $? "Changing directory to /opt"
 
-wget https://github.com/prometheus/alertmanager/releases/download/v0.33.1/alertmanager-0.33.1.linux-amd64.tar.gz &>>$LOGFILE
-VALIDATE $? "Downloading Alertmanager"
+if [ -d "$ALERTMANAGER_DIR" ]
+then
+    echo -e "Alertmanager already downloaded....$Y SKIPPING $N" | tee -a $LOGFILE
+else
+    wget https://github.com/prometheus/alertmanager/releases/download/v0.33.1/alertmanager-0.33.1.linux-amd64.tar.gz &>>$LOGFILE
+    VALIDATE $? "Downloading Alertmanager"
 
-mv /opt/alertmanager-0.33.1.linux-amd64 alertmanager &>>$LOGFILE
-VALIDATE $? "Renaming Alertmanager directory"
+    tar -xzf alertmanager-0.33.1.linux-amd64.tar.gz
+    VALIDATE $? "Extracting Alertmanager"
 
-cp -f /home/ec2-user/monitoring/alertmanager.service /etc/systemd/system/alertmanager.service  &>>$LOGFILE
-VALIDATE $? "Copying Alertmanager service file"
+    mv "alertmanager-0.33.1.linux-amd64" "$ALERTMANAGER_DIR" &>>$LOGFILE
+    VALIDATE $? "Renaming Alertmanager directory"
+fi
 
-systemctl daemon-reload &>>$LOGFILE
-VALIDATE $? "Daemon reloading systemd"
+# Idempotent copy: only copy (and reload) if the file actually changed
+if ! cmp -s /home/ec2-user/monitoring/alertmanager.service /etc/systemd/system/alertmanager.service 2>/dev/null
+then
+    cp -f /home/ec2-user/monitoring/alertmanager.service /etc/systemd/system/alertmanager.service &>>$LOGFILE
+    VALIDATE $? "Copying Alertmanager service file"
 
-systemctl start alertmanager &>>$LOGFILE
-VALIDATE $? "Starting Alertmanager service"
+    systemctl daemon-reload &>>$LOGFILE
+    VALIDATE $? "Daemon reloading systemd"
+else
+    echo -e "Alertmanager service file unchanged....$Y SKIPPING $N" | tee -a $LOGFILE
+fi
 
-systemctl enable alertmanager &>>$LOGFILE
-VALIDATE $? "Enabling Alertmanager service"
+# Idempotent start
+if systemctl is-active --quiet alertmanager
+then
+    echo -e "Alertmanager already running....$Y SKIPPING $N" | tee -a $LOGFILE
+else
+    systemctl start alertmanager &>>$LOGFILE
+    VALIDATE $? "Starting Alertmanager service"
+fi
+
+# Idempotent enable
+if systemctl is-enabled --quiet alertmanager 2>/dev/null
+then
+    echo -e "Alertmanager already enabled....$Y SKIPPING $N" | tee -a $LOGFILE
+else
+    systemctl enable alertmanager &>>$LOGFILE
+    VALIDATE $? "Enabling Alertmanager service"
+fi
