@@ -39,7 +39,7 @@ VALIDATE $? "Changing directory to /opt"
 wget https://github.com/prometheus/alertmanager/releases/download/v0.33.1/alertmanager-0.33.1.linux-amd64.tar.gz &>>$LOGFILE
 VALIDATE $? "Downloading Alertmanager"
 
-mv alertmanager-0.33.1.linux-amd64 alertmanager &>>$LOGFILE
+mv /opt/alertmanager-0.33.1.linux-amd64 alertmanager &>>$LOGFILE
 VALIDATE $? "Renaming Alertmanager directory"
 
 cp -f /home/ec2-user/monitoring/alertmanager.service /etc/systemd/system/alertmanager.service  &>>$LOGFILE
