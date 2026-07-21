@@ -1,12 +1,13 @@
 variable "security_group_ids" {
   description = "List of security groups used"
   type        = list(string)
-  # default = [ "sg-0123456789abcdef0" ]
+  default = [ "sg-0bbdd2b154434fbfd" ]
 }
 
 variable "prometheus_iam_instance_profile" {
   description = "IAM instance profile for Prometheus"
   type        = string
+  default = "PrometheusEC2Describe"
 }
 
 variable "instances" {
