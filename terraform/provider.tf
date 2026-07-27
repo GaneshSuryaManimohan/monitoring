@@ -9,7 +9,8 @@ terraform {
     bucket         = "backend-remote-s3-bucket"
     key            = "monitoring-remote-state"
     region         = "us-east-1"
-    dynamodb_table = "s3-bucket-locking"
+    # dynamodb_table = "s3-bucket-locking" --> Deprecated
+    use_lockfile = true 
   }
 }
 
