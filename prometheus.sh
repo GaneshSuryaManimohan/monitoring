@@ -17,6 +17,7 @@ LOGFILE=/tmp/$SCRIPT_NAME-$TIME_STAMP.log
 
 PROMETHEUS_VERSION="3.13.1"
 PROMETHEUS_DIR="/opt/prometheus"
+MONITORING_DIR="/home/ec2-user/monitoring"
 
 if [ $USERID -ne 0 ]
 then
@@ -61,21 +62,21 @@ fi
 NEEDS_RESTART=0
 
 # Idempotent service file copy
-if ! cmp -s /home/ec2-user/monitoring/prometheus.service /etc/systemd/system/prometheus.service 2>/dev/null
+if ! cmp -s "$MONITORING_DIR/prometheus.service" /etc/systemd/system/prometheus.service 2>/dev/null
 then
-    cp -f /home/ec2-user/monitoring/prometheus.service /etc/systemd/system/prometheus.service &>>$LOGFILE
+    cp -f "$MONITORING_DIR/prometheus.service" /etc/systemd/system/prometheus.service &>>$LOGFILE
     VALIDATE $? "Copying Prometheus service file"
     NEEDS_RESTART=1
 else
     echo -e "Prometheus service file unchanged....$Y SKIPPING $N" | tee -a $LOGFILE
 fi
 
-mkdir -p /opt/prometheus/alert-rules &>>$LOGFILE
+mkdir -p "$PROMETHEUS_DIR/alert-rules" &>>$LOGFILE
 VALIDATE $? "Creating alert-rules directory for Prometheus"
 
-# Sync alert rules; -u only copies newer/changed files, and we detect
-# whether anything actually changed for the restart decision
-CHANGED_RULES=$(cp -uv /home/ec2-user/monitoring/*.yml /opt/prometheus/alert-rules/ 2>>$LOGFILE | wc -l)
+# Copy ONLY actual alert rule files - never alertmanager.yml or prometheus.yml,
+# since Prometheus tries to parse everything in alert-rules/ as a rule file
+CHANGED_RULES=$(cp -uv "$MONITORING_DIR/cpu.yml" "$MONITORING_DIR/instance-down.yml" "$PROMETHEUS_DIR/alert-rules/" 2>>$LOGFILE | wc -l)
 VALIDATE $? "Copying alert rules files to Prometheus alert-rules directory"
 if [ "$CHANGED_RULES" -gt 0 ]
 then
@@ -83,9 +84,9 @@ then
 fi
 
 # Idempotent config copy
-if ! cmp -s /home/ec2-user/monitoring/prometheus.yml /opt/prometheus/prometheus.yml 2>/dev/null
+if ! cmp -s "$MONITORING_DIR/prometheus.yml" "$PROMETHEUS_DIR/prometheus.yml" 2>/dev/null
 then
-    cp -f /home/ec2-user/monitoring/prometheus.yml /opt/prometheus/prometheus.yml &>>$LOGFILE
+    cp -f "$MONITORING_DIR/prometheus.yml" "$PROMETHEUS_DIR/prometheus.yml" &>>$LOGFILE
     VALIDATE $? "Copying Prometheus configuration file"
     NEEDS_RESTART=1
 else
