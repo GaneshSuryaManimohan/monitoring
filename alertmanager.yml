@@ -7,9 +7,9 @@ route:
 receivers:
   - name: 'ses'
     email_configs:
-      - smarthost: email-smtp.us-east-1.amazonaws.com:587
-        auth_username: AKIAUY4V3WXPU3RPEAXV
-        auth_password: BNYw8NT3NI1p4mS9JbI53FrSukU7OLe9xFY+oEUEasHP
+      - smarthost: ray7kyxr8yry.fips.wmjb.mail-manager-smtp.amazonaws.com:587
+        auth_username: inp-i7cudrx4zxybnrnsjvseglha
+        auth_password: 4RRdNJPsd0Yif(i1LK*U?7xN[+of$nw7
         from: surya.manimohan@gmail.com
         to: manimohan.t22@gmail.com
         headers:
