@@ -60,3 +60,15 @@ VALIDATE $? "Copying expense.conf to /etc/nginx/default.d/"
 
 systemctl restart nginx &>>$LOGFILE
 VALIDATE $? "Restarting Nginx service"
+
+cp -f /home/ec2-user/monitoring/frontend/elasticsearch.repo /etc/yum.repos.d/elasticsearch.repo &>>$LOGFILE
+VALIDATE $? "Installing Elasticsearch repo"
+
+yum install filebeat -y &>>$LOGFILE
+VALIDATE $? "Installing Filebeat"
+
+# After Installing filebeat, make the following changes in the filebeat.yml file
+# Set enabled: true under filebeat.inputs
+# Under paths: modify the log path to /var/log/nginx/access.log
+# Specify the elasticsearch IP address for the host variable under output.elasticsearch section
+# And then do: systemctl start filebeat
