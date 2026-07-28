@@ -22,6 +22,14 @@ groups:
 # PromQL for memory usage
 # 100 - ((node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100)
 
+# On Server we can use the following command to find the memory usage"
+# awk '
+# /MemTotal/ {total=$2}
+# /MemAvailable/ {avail=$2}
+# END {
+#     printf "Memory Used: %.2f%%\n", 100 - (avail/total*100)
+# }' /proc/meminfo
+
 
 
 
