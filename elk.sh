@@ -66,3 +66,15 @@ VALIDATE $? "Elasticsearch is Running and Reacheable on localhost:9200"
 
 systemctl enable elasticsearch &>>$LOGFILE
 VALIDATE $? "Enabling elasticsearch service to start on boot"
+
+
+#### Install Kibana ####
+
+if  yum list installed kibana* &>>$LOGFILE
+then
+    echo -e "Kibana already installed....$Y SKIPPING $N" | tee -a $LOGFILE
+else
+    echo -e "Installing Kibana....$Y IN PROGRESS $N" | tee -a $LOGFILE
+    yum install kibana -y &>>$LOGFILE
+    VALIDATE $? "Installing Kibana"
+fi
