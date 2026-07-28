@@ -63,20 +63,13 @@ else
     echo -e "Alertmanager service file unchanged....$Y SKIPPING $N" | tee -a $LOGFILE
 fi
 
-# Idempotent start
-if systemctl is-active --quiet alertmanager
-then
-    echo -e "Alertmanager already running....$Y SKIPPING $N" | tee -a $LOGFILE
-else
-    systemctl start alertmanager &>>$LOGFILE
-    VALIDATE $? "Starting Alertmanager service"
-fi
+cp -f /home/ec2-user/monitoring/alertmanager.yml $ALERTMANAGER_DIR/alertmanager.yml &>>$LOGFILE
+VALIDATE $? "Copying Alertmanager configuration file"
 
-# Idempotent enable
-if systemctl is-enabled --quiet alertmanager 2>/dev/null
-then
-    echo -e "Alertmanager already enabled....$Y SKIPPING $N" | tee -a $LOGFILE
-else
-    systemctl enable alertmanager &>>$LOGFILE
-    VALIDATE $? "Enabling Alertmanager service"
-fi
+systemctl enable alertmanager &>>$LOGFILE
+VALIDATE $? "Enabling Alertmanager service"
+
+systemctl restart alertmanager &>>$LOGFILE
+VALIDATE $? "Restarting Alertmanager service"
+
+
