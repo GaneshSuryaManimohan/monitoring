@@ -71,5 +71,5 @@ VALIDATE $? "Installing Filebeat"
 # vim /etc/filebeat/filebeat.yml
 # Set enabled: true under filebeat.inputs
 # Under paths: modify the log path to /var/log/nginx/access.log
-# Specify the elasticsearch IP address for the host variable under output.elasticsearch section
+# Specify the elasticsearch IP address (Private IP)for the host variable under output.elasticsearch section
 # And then do: systemctl start filebeat
