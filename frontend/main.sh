@@ -67,7 +67,8 @@ VALIDATE $? "Installing Elasticsearch repo"
 yum install filebeat -y &>>$LOGFILE
 VALIDATE $? "Installing Filebeat"
 
-# After Installing filebeat, make the following changes in the filebeat.yml file
+# After Installing filebeat, make the following changes in the /etc/filebeat/filebeat.yml file
+# vim /etc/filebeat/filebeat.yml
 # Set enabled: true under filebeat.inputs
 # Under paths: modify the log path to /var/log/nginx/access.log
 # Specify the elasticsearch IP address for the host variable under output.elasticsearch section
