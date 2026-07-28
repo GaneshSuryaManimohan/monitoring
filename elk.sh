@@ -33,15 +33,13 @@ USERID=$(id -u)
 SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
 LOGFILE=/tmp/$SCRIPT_NAME-$TIME_STAMP.log
 
-yum list installed java-11* &>>$LOGFILE
-VALIDATE $? "Checking if Java 11 is installed"
-
-if [ $? -eq 0 ]
+if yum list installed "java-11*" &>>"$LOGFILE"
 then
-    echo -e "Java 11 already installed....$Y SKIPPING $N" | tee -a $LOGFILE
+    echo -e "Java 11 already installed....$Y SKIPPING $N" | tee -a "$LOGFILE"
 else
-    echo -e "Installing Java 11....$Y IN PROGRESS $N" | tee -a $LOGFILE
-    yum install java-11-openjdk-devel -y &>>$LOGFILE
+    echo -e "Installing Java 11....$Y IN PROGRESS $N" | tee -a "$LOGFILE"
+
+    yum install java-11-openjdk-devel -y &>>"$LOGFILE"
     VALIDATE $? "Installing Java 11"
 fi
 
@@ -60,3 +58,15 @@ else
     yum install elasticsearch -y &>>$LOGFILE
     VALIDATE $? "Installing elasticsearch"
 fi
+
+cp -f /home/ec2-user/monitoring/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml &>>$LOGFILE
+VALIDATE $? "Copying elasticsearch.yml to /etc/elasticsearch/"
+
+systemctl restart elasticsearch
+VALIDATE $? "Restarting elasticsearch service"
+
+curl localhost:9200 | tee -a $LOGFILE
+VALIDATE $? "Elasticsearch is Running and Reacheable on localhost:9200"
+
+systemctl enable elasticsearch &>>$LOGFILE
+VALIDATE $? "Enabling elasticsearch service to start on boot"
