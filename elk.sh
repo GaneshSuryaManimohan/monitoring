@@ -38,7 +38,6 @@ then
     echo -e "Java 11 already installed....$Y SKIPPING $N" | tee -a "$LOGFILE"
 else
     echo -e "Installing Java 11....$Y IN PROGRESS $N" | tee -a "$LOGFILE"
-
     yum install java-11-openjdk-devel -y &>>"$LOGFILE"
     VALIDATE $? "Installing Java 11"
 fi
@@ -47,10 +46,7 @@ fi
 cp -f /home/ec2-user/monitoring/elasticsearch.repo /etc/yum.repos.d/elasticsearch.repo &>>$LOGFILE
 VALIDATE $? "Copying elasticsearch.repo to /etc/yum.repos.d/"
 
-yum list installed elasticsearch &>>$LOGFILE
-VALIDATE $? "Checking if elasticsearch is installed"
-
-if [ $? -eq 0 ]
+if yum list installed "elasticsearch" &>>$LOGFILE
 then
     echo -e "elasticsearch already installed....$Y SKIPPING $N" | tee -a $LOGFILE
 else
